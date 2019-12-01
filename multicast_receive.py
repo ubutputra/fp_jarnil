@@ -50,9 +50,11 @@ while True:
     	print('sending acknowledgement to', address)
     	sock.sendto(theack0.encode(), address)
     else:
-    	nodearray[str(pesan[0])]=str(address[0])+" "+str(address[1])
-    	print(nodearray)
-    	connected_group = (str(connectedip), int(connectedport))
-    	sent = sock.sendto(data, connected_group)
+    	if connectedip!='0' and connectedport!='0':
+    		nodearray[str(pesan[0])]=str(address[0])+" "+str(address[1])
+    		print(nodearray)
+    		connected_group = (str(connectedip), int(connectedport))
+    		sent = sock.sendto(data, connected_group)
+    	
 
     
