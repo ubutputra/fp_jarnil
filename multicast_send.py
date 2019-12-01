@@ -2,15 +2,19 @@ import socket
 import struct
 import sys
 
-message = 'not so very important data'
-multicast_group = ('224.3.29.71', 10000)
+groupip=str(sys.argv[1])
+groupport=int(sys.argv[2])
+destination=input('destination: ')
+iam=input("who am i? ")
+message = str(iam)+' TO '+str(destination)
+multicast_group = (groupip, groupport)
 
 # Create the datagram socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Set a timeout so the socket does not block indefinitely when trying
 # to receive data.
-sock.settimeout(0.2)
+sock.settimeout(2)
 
 ttl = struct.pack('b', 1)
 sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
