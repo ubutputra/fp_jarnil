@@ -1,6 +1,7 @@
 import socket
 import struct
 import sys
+import time
 
 groupip=str(sys.argv[1])
 groupport=int(sys.argv[2])
@@ -30,6 +31,7 @@ nodearray=dict()
 # Receive/respond loop
 while True:
     print('\nwaiting to receive message')
+    sock.settimeout(None)
     data, address = sock.recvfrom(1024)
     
     print('received %s bytes from %s' % (len(data), address))
@@ -37,24 +39,43 @@ while True:
     pesan = data.decode().split(" ")
     print(pesan[-1])
     if pesan[0]=="ack":
-    	theack='ack '+str(pesan[1])
-    	alamat=nodearray[str(pesan[1])].split(" ")
-    	print(alamat)
-    	address1=(alamat[0],int(alamat[1]))
+        theack='ack '+str(pesan[1])
+        alamat=nodearray[str(pesan[1])].split(" ")
+        print(alamat)
+        address1=(alamat[0],int(alamat[1]))
 
-    	print('sending acknowledgement to', address1)
-    	sock.sendto(theack.encode(), address1)
+        print('sending acknowledgement to', address1)
+        sock.sendto(theack.encode(), address1)
 
     elif str(pesan[-1])==str(iam):
-    	theack0='ack '+str(pesan[0])
-    	print('sending acknowledgement to', address)
-    	sock.sendto(theack0.encode(), address)
+        theack0='ack '+str(pesan[0])
+        print('sending acknowledgement to', address)
+        sock.sendto(theack0.encode(), address)
     else:
-    	if connectedip!='0' and connectedport!='0':
-    		nodearray[str(pesan[0])]=str(address[0])+" "+str(address[1])
-    		print(nodearray)
-    		connected_group = (str(connectedip), int(connectedport))
-    		sent = sock.sendto(data, connected_group)
-    	
+        if connectedip!='0' and connectedport!='0':
+            nodearray[str(pesan[0])]=str(address[0])+" "+str(address[1])
+            print(nodearray)
+            connected_group = (str(connectedip), int(connectedport))
+            sent = sock.sendto(data, connected_group)
+            try:
+                sock.settimeout(1)
+                data, address = sock.recvfrom(1024)
+            except Exception as e:
+                x=0
+                for x in range(0,60):
+                    x=+1;
+                    sock.sendto(data, connected_group)
+                    try:
+                        data, address = sock.recvfrom(1024)
+                        break
+                    except:
+                        pass
+                    time.sleep(1)
+            pesan = data.decode().split(" ")
+            theack='ack '+str(pesan[1])
+            alamat=nodearray[str(pesan[1])].split(" ")
+            print(alamat)
+            address1=(alamat[0],int(alamat[1]))
 
-    
+            print('sending acknowledgement to', address1)
+            sock.sendto(theack.encode(), address1)

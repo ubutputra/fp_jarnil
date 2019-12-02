@@ -14,7 +14,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Set a timeout so the socket does not block indefinitely when trying
 # to receive data.
-sock.settimeout(2)
+sock.settimeout(60)
 
 ttl = struct.pack('b', 1)
 sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
@@ -35,6 +35,7 @@ try:
             break
         else:
             print ('received "%s" from %s' % (data, server))
+            break
 
 finally:
     print ('closing socket')
