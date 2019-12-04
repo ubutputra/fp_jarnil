@@ -4,7 +4,7 @@ import sys
 import time
 import threading
 
-def multicast_recv():
+def multicast_recv(a,iam):
 	groupip='224.3.29.73'
 	groupport=10000
 	multicast_group = groupip
@@ -22,11 +22,12 @@ def multicast_recv():
 		print('received %s bytes from %s' % (len(data), address))
 		print(data.decode())
 		pesan=data.decode().split(";")
-		if int(pesan[1])<5:
-			kirim=str(pesan[0])+";"+str(int(pesan[1])+1)
+		if str(pesan[2])==iam:
+			continue
+		elif int(pesan[1])<5:
+			kirim=str(pesan[0])+";"+str(int(pesan[1])+1)+";"+str(int(pesan[2]))
 			send_only = threading.Thread(target=multicast_send_only, args=(1,kirim))
 			send_only.start()
-			pass
 		# print('sending acknowledgement to', address)
 		# sock.sendto('theack'.encode(), address)
 
@@ -74,11 +75,13 @@ def multicast_send(a,pesan):
 	    sock.close()
 
 if __name__ == "__main__":
-	recv = threading.Thread(target=multicast_recv, args=())
+	iam=input("who are you? ")
+	recv = threading.Thread(target=multicast_recv, args=(1,iam))
 	recv.start()
 	while True:
 		command=input("enter 1 to send: ")
 		if command=='1':
-			send = threading.Thread(target=multicast_send, args=(1,"Pesan penting untukmu;0"))
+			pesan="Pesan penting untukmu;0;"+str(iam)
+			send = threading.Thread(target=multicast_send, args=(1,pesan))
 			send.start()
 			# multicast_send('Pesan penting untukmu;0')
