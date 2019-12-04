@@ -25,7 +25,7 @@ def multicast_recv(a,iam):
 		if str(pesan[2])==iam:
 			continue
 		elif int(pesan[1])<5:
-			kirim=str(pesan[0])+";"+str(int(pesan[1])+1)+";"+str(int(pesan[2]))
+			kirim=str(pesan[0])+";"+str(int(pesan[1])+1)+";"+str(pesan[2])
 			send_only = threading.Thread(target=multicast_send_only, args=(1,kirim))
 			send_only.start()
 		# print('sending acknowledgement to', address)
