@@ -25,11 +25,16 @@ def multicast_recv():
 		data, address = sock.recvfrom(1024)
 		print('received %s bytes from %s' % (len(data), address))
 		print(data.decode())
-		print('sending acknowledgement to', address)
-		sock.sendto('theack'.encode(), address)
+		pesan=data.decode().split(";")
+		if int(pesan[1])<5:
+			kirim=str(pesan[0])+";"+str(int(pesan[1])+1)
+			multicast_send(kirim)
+			pass
+		# print('sending acknowledgement to', address)
+		# sock.sendto('theack'.encode(), address)
 
-def multicast_send():
-	message = 'Pesan penting untukmu'
+def multicast_send(pesan):
+	message = pesan
 	multicast_group = ('224.3.29.73', 10000)
 
 	# Create the datagram socket
@@ -69,4 +74,4 @@ if __name__ == "__main__":
 	while True:
 		command=input("enter 1 to send: ")
 		if command=='1':
-			multicast_send()
+			multicast_send('Pesan penting untukmu;0')
