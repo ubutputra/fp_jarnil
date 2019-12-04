@@ -82,6 +82,6 @@ if __name__ == "__main__":
 		command=input("enter 1 to send: ")
 		if command=='1':
 			pesan="Pesan penting untukmu;0;"+str(iam)
-			send = threading.Thread(target=multicast_send, args=(1,pesan))
+			send = threading.Thread(target=multicast_send_only, args=(1,pesan))
 			send.start()
 			# multicast_send('Pesan penting untukmu;0')
