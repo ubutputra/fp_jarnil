@@ -43,6 +43,7 @@ def multicast_send_only(a,pesan):
 	ttl = struct.pack('b', 1)
 	sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
 	sent = sock.sendto(message.encode(), multicast_group)
+	print(sent)
 
 def multicast_send(a,pesan):
 	message = pesan
@@ -56,23 +57,24 @@ def multicast_send(a,pesan):
 	sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
 	try:
 
-	    print ('sending "%s"' % message)
-	    sent = sock.sendto(message.encode(), multicast_group)
-
-	    while True:
-	        print ('waiting to receive')
-	        try:
-	            data, server = sock.recvfrom(16)
-	        except socket.timeout:
-	            print ('timed out, no more responses')
-	            break
-	        else:
-	            print ('received "%s" from %s' % (data, server))
-	            break
+		print ('sending "%s"' % message)
+		sent = sock.sendto(message.encode(), multicast_group)
+		print(sent)
+		
+		while True:
+			print ('waiting to receive')
+			try:
+				data, server = sock.recvfrom(16)
+			except socket.timeout:
+				print ('timed out, no more responses')
+				break
+			else:
+				print ('received "%s" from %s' % (data, server))
+				break
 
 	finally:
-	    print ('closing socket')
-	    sock.close()
+		print ('closing socket')
+		sock.close()
 
 if __name__ == "__main__":
 	iam=input("who are you? ")
