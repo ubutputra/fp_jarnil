@@ -20,7 +20,7 @@ def hitung_jarak(lat,lon):
 	Slat = lat - latitude
 	Slong = lon - longitude
 	distance = math.sqrt(math.pow(Slat,2)+math.pow(Slong,2))
-	return distance
+	return distance * 100
 
 def multicast_recv(a,iam):
 	multicast_group = groupip
@@ -44,7 +44,7 @@ def multicast_recv(a,iam):
 			long_pesan=float(pesan[5])
 			jarak=hitung_jarak(lat_pesan,long_pesan)
 			print("pengirim : "+str(pesan[2]))
-			print("jarak pengirim : "+str(jarak))
+			print("jarak pengirim : "+str(jarak)+" km")
 			print(str(pesan[0]))
 		#kalo belum melebihi hop
 		elif int(pesan[1]) < max_hop:
