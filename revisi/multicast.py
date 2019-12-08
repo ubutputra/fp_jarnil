@@ -33,7 +33,7 @@ def multicast_recv(a,iam):
 		#kalo belum melebihi hop
 		elif int(pesan[1])<5:
 			#kalo pesannya belum ada di buffer
-			if str(pesan[4]) not in msgbuffer:
+			if str(pesan[4]) not in hashbuffer:
 				kirim = str(pesan[0]) + ";" + str(int(pesan[1]) + 1) + ";" + str(pesan[2]) + str(pesan[3]) + str(pesan[4])
 				hashbuffer.append(str(pesan[4]))
 				msgbuffer.append(kirim)
