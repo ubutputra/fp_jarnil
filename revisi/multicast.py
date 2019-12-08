@@ -3,14 +3,17 @@ import struct
 import sys
 import time
 import threading
+import hashlib
 
 def multicast_recv(a,iam):
+	hashbuffer = []
+	msgbuffer = []
 	groupip='224.3.29.73'
 	groupport=10000
 	multicast_group = groupip
 	server_address = ('', groupport)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+	
 	sock.bind(server_address)
 
 	group = socket.inet_aton(multicast_group)
@@ -24,10 +27,22 @@ def multicast_recv(a,iam):
 		pesan=data.decode().split(";")
 		if str(pesan[2])==iam:
 			continue
+		elif str(pesan[3] == iam):
+			print("ada pesan!")
+			print(str(pesan[0]))
+		#kalo belum melebihi hop
 		elif int(pesan[1])<5:
-			kirim=str(pesan[0])+";"+str(int(pesan[1])+1)+";"+str(pesan[2])
-			send_only = threading.Thread(target=multicast_send_only, args=(1,kirim))
-			send_only.start()
+			#kalo pesannya belum ada di buffer
+			if str(pesan[4]) not in msgbuffer:
+				kirim = str(pesan[0]) + ";" + str(int(pesan[1]) + 1) + ";" + str(pesan[2]) + str(pesan[3]) + str(pesan[4])
+				hashbuffer.append(str(pesan[4]))
+				msgbuffer.append(kirim)
+				for i in msgbuffer:
+					send_only = threading.Thread(target=multicast_send_only, args=(1,i))
+					send_only.start()
+			#drop kalo udah punya messagenya di buffer
+			else:
+				print("message already exists on the buffer, dropping message..")
 		# print('sending acknowledgement to', address)
 		# sock.sendto('theack'.encode(), address)
 
@@ -81,9 +96,15 @@ if __name__ == "__main__":
 	recv = threading.Thread(target=multicast_recv, args=(1,iam))
 	recv.start()
 	while True:
-		command=input("enter 1 to send: ")
+		command=input("inputkan 1 untuk mengirim >> ")
 		if command=='1':
-			pesan="Pesan penting untukmu;0;"+str(iam)
+			pesanku = "Pesan penting untukmu~~"
+			receiver = input("untuk siapa? >> ")
+			#hash buat bedain jenis pesan
+			thehash = hashlib.md5(pesanku + str(iam) + str(receiver))
+			hashhex = thehash.hexdigest()
+			
+			pesan = pesanku + ";0;" + str(iam) + ";" + str(receiver) + ";" + str(hashhex)
 			send = threading.Thread(target=multicast_send_only, args=(1,pesan))
 			send.start()
 			# multicast_send('Pesan penting untukmu;0')
