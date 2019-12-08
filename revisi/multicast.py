@@ -40,7 +40,7 @@ def multicast_recv(a,iam):
 				kirim = str(pesan[0]) + ";" + str(int(pesan[1]) + 1) + ";" + str(pesan[2]) + str(pesan[3]) + str(pesan[4])
 				hashbuffer.append(str(pesan[4]))
 				msgbuffer.append(kirim)
-				while True:
+				for i in msgbuffer:
 					send_only = threading.Thread(target=multicast_send_only, args=(1,i))
 					send_only.start()
 			#drop kalo udah punya messagenya di buffer
