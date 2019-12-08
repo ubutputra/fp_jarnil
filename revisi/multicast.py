@@ -101,7 +101,7 @@ if __name__ == "__main__":
 			pesanku = "Pesan penting untukmu~~"
 			receiver = input("untuk siapa? >> ")
 			#hash buat bedain jenis pesan
-			thehash = hashlib.md5(pesanku + str(iam) + str(receiver))
+			thehash = hashlib.md5((pesanku + str(iam) + str(receiver)).encode())
 			hashhex = thehash.hexdigest()
 			
 			pesan = pesanku + ";0;" + str(iam) + ";" + str(receiver) + ";" + str(hashhex)
