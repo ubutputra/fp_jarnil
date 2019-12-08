@@ -5,6 +5,8 @@ import time
 import threading
 import hashlib
 
+max_buffer = 5
+
 def multicast_recv(a,iam):
 	hashbuffer = []
 	msgbuffer = []
@@ -31,7 +33,7 @@ def multicast_recv(a,iam):
 			print("ada pesan!")
 			print(str(pesan[0]))
 		#kalo belum melebihi hop
-		elif int(pesan[1])<5:
+		elif int(pesan[1]) < max_buffer:
 			#kalo pesannya belum ada di buffer
 			print("buffer: " + str(msgbuffer))
 			if str(pesan[4]) not in msgbuffer:
@@ -44,6 +46,8 @@ def multicast_recv(a,iam):
 			#drop kalo udah punya messagenya di buffer
 			else:
 				print("message already exists on the buffer, dropping message..")
+		else:
+			print("dropping packets due to maximum amount of buffer.")
 		# print('sending acknowledgement to', address)
 		# sock.sendto('theack'.encode(), address)
 
