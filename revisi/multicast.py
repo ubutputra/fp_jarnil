@@ -22,9 +22,9 @@ def multicast_recv(a,iam):
 	while True:
 		sock.settimeout(None)
 		data, address = sock.recvfrom(1024)
-		print('received %s bytes from %s' % (len(data), address))
+		print('\nreceived %s bytes from %s' % (len(data), address))
 		print(data.decode())
-		pesan=data.decode().split(";")
+		pesan=data.decode().split(";")1
 		if str(pesan[2])==iam:
 			continue
 		elif str(pesan[3] == iam):
@@ -33,11 +33,12 @@ def multicast_recv(a,iam):
 		#kalo belum melebihi hop
 		elif int(pesan[1])<5:
 			#kalo pesannya belum ada di buffer
+			print("buffer: " + str(msgbuffer))
 			if str(pesan[4]) not in msgbuffer:
 				kirim = str(pesan[0]) + ";" + str(int(pesan[1]) + 1) + ";" + str(pesan[2]) + str(pesan[3]) + str(pesan[4])
 				hashbuffer.append(str(pesan[4]))
 				msgbuffer.append(kirim)
-				for i in msgbuffer:
+				while True:
 					send_only = threading.Thread(target=multicast_send_only, args=(1,i))
 					send_only.start()
 			#drop kalo udah punya messagenya di buffer
