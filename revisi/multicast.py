@@ -4,12 +4,26 @@ import sys
 import time
 import threading
 import hashlib
+import geopy
+import math
+from geopy.geocoders import Nominatim
 
 max_hop = 5
 hashbuffer = []
 msgbuffer = []
 groupip='224.3.29.73'
 groupport=10000
+latitude=0
+longitude=0
+
+def hitung_jarak(lat,long):
+	EARTH_RADIUS = 6367.45
+	deltalat = lat2 - latitude
+	deltalon = lon2 - longitude
+	a = math.sin(deltalat / 2) * math.sin(deltalat / 2) + math.cos(latitude) * math.cos(lat2) * math.sin(deltalon / 2) * math.sin(deltalon / 2)
+	c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+	distance = EARTH_RADIUS*c
+	return distance
 
 def multicast_recv(a,iam):
 	multicast_group = groupip
@@ -24,11 +38,16 @@ def multicast_recv(a,iam):
 	while True:
 		sock.settimeout(None)
 		data, address = sock.recvfrom(1024)
-		print('\nreceived %s bytes from %s' % (len(data), address))
-		# print(data.decode())
+		print(data.decode())
 		pesan=data.decode().split(";")
+		print('\nreceived %s bytes from %s' % (len(data), address))
 		if str(pesan[3]) == iam:
 			print("ada pesan!")
+			lat_pesan=float(pesan[5])
+			long_pesan=float(pesan[6])
+			jarak=hitung_jarak(lat_pesan,long_pesan)
+			print("pengirim : "+str(pesan[2]))
+			print("jarak pengirim : "+str(jarak))
 			print(str(pesan[0]))
 		#kalo belum melebihi hop
 		elif int(pesan[1]) < max_hop:
@@ -64,7 +83,7 @@ def multicast_buffering():
 			msg=x.split(";")
 			if int(msg[1])<max_hop:
 				hopnya = int(msg[1]) + 1
-				kirim = str(msg[0]) + ";" + str(hopnya) + ";" + str(msg[2]) + ";" + str(msg[3]) + ";" + str(msg[4])
+				kirim = str(msg[0]) + ";" + str(hopnya) + ";" + str(msg[2]) + ";" + str(msg[3]) + ";" + str(msg[4]) + ";" + str(msg[5]) + ";" + str(msg[6])
 				multicast_send_only(kirim)
 				msgbuffer[int(lala)]=kirim
 			lala = int(lala)+1
@@ -79,6 +98,13 @@ def multicast_buffering():
 
 if __name__ == "__main__":
 	iam=input("who are you? ")
+	lokasi=input("input your location! ")
+	geolocator = Nominatim(user_agent="multicast")
+	location = geolocator.geocode(lokasi)
+	longitude=location.longitude
+	latitude=location.latitude
+	print(location)
+	print(str(longitude)+','+str(latitude))
 	recv = threading.Thread(target=multicast_recv, args=(1,iam))
 	recv.start()
 	buff = threading.Thread(target=multicast_buffering, args=())
@@ -92,5 +118,5 @@ if __name__ == "__main__":
 			thehash = hashlib.md5((pesanku + str(iam) + str(receiver)).encode())
 			hashhex = thehash.hexdigest()
 			
-			pesan = pesanku + ";0;" + str(iam) + ";" + str(receiver) + ";" + str(hashhex)
+			pesan = pesanku + ";0;" + str(iam) + ";" + str(receiver) + ";" + str(hashhex) +";"+str(longitude)+";"+str(latitude)
 			multicast_send_only(pesan)
