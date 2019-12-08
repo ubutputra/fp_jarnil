@@ -16,10 +16,10 @@ groupport=10000
 latitude=0
 longitude=0
 
-def hitung_jarak(lat,long):
+def hitung_jarak(lat,lon):
 	EARTH_RADIUS = 6367.45
-	deltalat = lat2 - latitude
-	deltalon = lon2 - longitude
+	deltalat = lat - latitude
+	deltalon = lon - longitude
 	a = math.sin(deltalat / 2) * math.sin(deltalat / 2) + math.cos(latitude) * math.cos(lat2) * math.sin(deltalon / 2) * math.sin(deltalon / 2)
 	c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
 	distance = EARTH_RADIUS*c
