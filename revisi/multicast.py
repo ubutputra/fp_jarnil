@@ -17,12 +17,9 @@ latitude=0
 longitude=0
 
 def hitung_jarak(lat,lon):
-	EARTH_RADIUS = 6367.45
-	deltalat = lat - latitude
-	deltalon = lon - longitude
-	a = math.sin(deltalat / 2) * math.sin(deltalat / 2) + math.cos(latitude) * math.cos(lat2) * math.sin(deltalon / 2) * math.sin(deltalon / 2)
-	c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-	distance = EARTH_RADIUS*c
+	Slat = lat - latitude
+	Slong = lon - longitude
+	distance = math.sqrt(math.pow(Slat,2)+math.pow(Slong,2))
 	return distance
 
 def multicast_recv(a,iam):
@@ -43,8 +40,8 @@ def multicast_recv(a,iam):
 		print('\nreceived %s bytes from %s' % (len(data), address))
 		if str(pesan[3]) == iam:
 			print("ada pesan!")
-			lat_pesan=float(pesan[5])
-			long_pesan=float(pesan[6])
+			lat_pesan=float(pesan[6])
+			long_pesan=float(pesan[5])
 			jarak=hitung_jarak(lat_pesan,long_pesan)
 			print("pengirim : "+str(pesan[2]))
 			print("jarak pengirim : "+str(jarak))
