@@ -35,7 +35,7 @@ def multicast_recv(a,iam):
 	while True:
 		sock.settimeout(None)
 		data, address = sock.recvfrom(1024)
-		print(data.decode())
+		# print(data.decode())
 		pesan=data.decode().split(";")
 		print('\nreceived %s bytes from %s' % (len(data), address))
 		if str(pesan[3]) == iam:
