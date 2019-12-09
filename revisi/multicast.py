@@ -50,10 +50,9 @@ def multicast_recv(a,iam):
 		else:
 			#kalo pesannya belum ada di buffer
 			if str(pesan[4]) not in hashbuffer:
-				kirim = data.decode('utf-8','ignore')
 				simpan = str(pesan[0]) + ";0;" + str(pesan[2]) + ";" + str(pesan[3]) + ";" + str(pesan[4]) + ";" + str(pesan[5]) + ";" + str(pesan[6])
 				hashbuffer.append(str(pesan[4]))
-				msgbuffer.append(kirim)
+				msgbuffer.append(simpan)
 			#drop kalo udah punya messagenya di buffer
 			else:
 				print("message already exists on the buffer, dropping message..")
@@ -79,10 +78,10 @@ def multicast_buffering():
 			msg=x.split(";")
 			if int(msg[1])<max_hop:
 				hopnya = int(msg[1]) + 1
-				simpan = str(msg[0]) + ";" + str(hopnya) + ";" + str(msg[2]) + ";" + str(msg[3]) + ";" + str(msg[4]) + ";" + str(msg[5]) + ";" + str(msg[6])
-				print(simpan)
-				multicast_send_only(simpan)
-				msgbuffer[int(lala)]=simpan
+				kirim = str(msg[0]) + ";" + str(hopnya) + ";" + str(msg[2]) + ";" + str(msg[3]) + ";" + str(msg[4]) + ";" + str(msg[5]) + ";" + str(msg[6])
+				print(kirim)
+				multicast_send_only(kirim)
+				msgbuffer[int(lala)]=kirim
 			lala = int(lala)+1
 
 		po = 0
