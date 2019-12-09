@@ -11,7 +11,7 @@ from geopy.geocoders import Nominatim
 max_hop = 5
 hashbuffer = []
 msgbuffer = []
-groupip='224.2.15.70'
+groupip='224.13.4.23'
 groupport=10000
 latitude=0
 longitude=0
@@ -35,8 +35,8 @@ def multicast_recv(a,iam):
 	while True:
 		sock.settimeout(None)
 		data, address = sock.recvfrom(1024)
-		# print(data.decode())
-		pesan=data.decode().split(";")
+		print(data.decode('utf-8','ignore'))
+		pesan=data.decode('utf-8','ignore').split(";")
 		print('\nreceived %s bytes from %s' % (len(data), address))
 		if str(pesan[3]) == iam:
 			print("ada pesan!")
@@ -47,18 +47,16 @@ def multicast_recv(a,iam):
 			print("jarak pengirim : "+str(jarak)+" km")
 			print(str(pesan[0]))
 		#kalo belum melebihi hop
-		elif int(pesan[1]) < max_hop:
+		else:
 			#kalo pesannya belum ada di buffer
 			if str(pesan[4]) not in hashbuffer:
-				kirim = data.decode()
+				kirim = data.decode('utf-8','ignore')
 				simpan = str(pesan[0]) + ";0;" + str(pesan[2]) + ";" + str(pesan[3]) + ";" + str(pesan[4]) + ";" + str(pesan[5]) + ";" + str(pesan[6])
 				hashbuffer.append(str(pesan[4]))
 				msgbuffer.append(kirim)
 			#drop kalo udah punya messagenya di buffer
 			else:
 				print("message already exists on the buffer, dropping message..")
-		else:
-			print("dropping packets due to maximum amount of hop.")
 		# print('sending acknowledgement to', address)
 		# sock.sendto('theack'.encode(), address)
 
@@ -82,6 +80,7 @@ def multicast_buffering():
 			if int(msg[1])<max_hop:
 				hopnya = int(msg[1]) + 1
 				simpan = str(msg[0]) + ";" + str(hopnya) + ";" + str(msg[2]) + ";" + str(msg[3]) + ";" + str(msg[4]) + ";" + str(msg[5]) + ";" + str(msg[6])
+				print(simpan)
 				multicast_send_only(simpan)
 				msgbuffer[int(lala)]=simpan
 			lala = int(lala)+1
