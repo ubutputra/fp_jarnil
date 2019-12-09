@@ -44,6 +44,7 @@ def multicast_recv(a,iam):
 		jarak=hitung_jarak(lat_pesan,long_pesan)
 		# time.sleep(int(jarak))
 		if jarak>1000:
+			print("jarak terlalu jauh")
 			continue
 		print('\nreceived %s bytes from %s' % (len(data), address))
 		if str(pesan[3]) == iam:
