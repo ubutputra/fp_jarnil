@@ -47,16 +47,14 @@ def multicast_recv(a,iam):
 			print("pengirim : "+str(pesan[2]))
 			print("jarak pengirim : "+str(jarak)+" km")
 			print(str(pesan[0]))
-		#kalo belum melebihi hop
+		#kalo pesannya belum ada di buffer
+		elif str(pesan[4]) not in hashbuffer and str(pesan[4]) not in trashhash:
+			simpan = str(pesan[0]) + ";0;" + str(pesan[2]) + ";" + str(pesan[3]) + ";" + str(pesan[4]) + ";" + str(pesan[5]) + ";" + str(pesan[6])
+			hashbuffer.append(str(pesan[4]))
+			msgbuffer.append(simpan)
+		#drop kalo udah punya messagenya di buffer
 		else:
-			#kalo pesannya belum ada di buffer
-			if str(pesan[4]) not in hashbuffer and str(pesan[4]) not in trashhash:
-				simpan = str(pesan[0]) + ";0;" + str(pesan[2]) + ";" + str(pesan[3]) + ";" + str(pesan[4]) + ";" + str(pesan[5]) + ";" + str(pesan[6])
-				hashbuffer.append(str(pesan[4]))
-				msgbuffer.append(simpan)
-			#drop kalo udah punya messagenya di buffer
-			else:
-				print("message already exists on the buffer, dropping message..")
+			print("message already exists on the buffer, dropping message..")
 		# print('sending acknowledgement to', address)
 		# sock.sendto('theack'.encode(), address)
 
