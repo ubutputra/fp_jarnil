@@ -7,6 +7,7 @@ import hashlib
 import geopy
 import math
 from geopy.geocoders import Nominatim
+from geopy import distance
 
 max_hop = 5
 hashbuffer = []
@@ -18,10 +19,10 @@ latitude=0
 longitude=0
 
 def hitung_jarak(lat,lon):
-	Slat = lat - latitude
-	Slong = lon - longitude
-	distance = math.sqrt(math.pow(Slat,2)+math.pow(Slong,2))
-	return distance * 100
+	sender_loc = (lat,lon)
+	my_loc = (latitude,longitude)
+	jarak = distance.distance(sender_loc, my_loc).km
+	return jarak
 
 def multicast_recv(a,iam):
 	multicast_group = groupip
