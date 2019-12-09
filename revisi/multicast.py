@@ -10,6 +10,7 @@ from geopy.geocoders import Nominatim
 
 max_hop = 5
 hashbuffer = []
+trashhash = []
 msgbuffer = []
 groupip='224.13.4.23'
 groupport=10000
@@ -35,7 +36,7 @@ def multicast_recv(a,iam):
 	while True:
 		sock.settimeout(None)
 		data, address = sock.recvfrom(1024)
-		print(data.decode('utf-8','ignore'))
+		# print(data.decode('utf-8','ignore'))
 		pesan=data.decode('utf-8','ignore').split(";")
 		print('\nreceived %s bytes from %s' % (len(data), address))
 		if str(pesan[3]) == iam:
@@ -49,7 +50,7 @@ def multicast_recv(a,iam):
 		#kalo belum melebihi hop
 		else:
 			#kalo pesannya belum ada di buffer
-			if str(pesan[4]) not in hashbuffer:
+			if str(pesan[4]) not in hashbuffer and str(pesan[4]) not in trashhash:
 				simpan = str(pesan[0]) + ";0;" + str(pesan[2]) + ";" + str(pesan[3]) + ";" + str(pesan[4]) + ";" + str(pesan[5]) + ";" + str(pesan[6])
 				hashbuffer.append(str(pesan[4]))
 				msgbuffer.append(simpan)
@@ -79,7 +80,7 @@ def multicast_buffering():
 			if int(msg[1])<max_hop:
 				hopnya = int(msg[1]) + 1
 				kirim = str(msg[0]) + ";" + str(hopnya) + ";" + str(msg[2]) + ";" + str(msg[3]) + ";" + str(msg[4]) + ";" + str(msg[5]) + ";" + str(msg[6])
-				print(kirim)
+				# print(kirim)
 				multicast_send_only(kirim)
 				msgbuffer[int(lala)]=kirim
 			lala = int(lala)+1
@@ -89,6 +90,7 @@ def multicast_buffering():
 			psn=i.split(";")
 			if int(psn[1])>=max_hop:
 				del msgbuffer[po]
+				trashhash.append(hashbuffer[po])
 				del hashbuffer[po]
 			po = int(po)+1
 
