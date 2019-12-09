@@ -39,12 +39,13 @@ def multicast_recv(a,iam):
 		data, address = sock.recvfrom(1024)
 		# print(data.decode('utf-8','ignore'))
 		pesan=data.decode('utf-8','ignore').split(";")
+		lat_pesan=float(pesan[6])
+		long_pesan=float(pesan[5])
+		jarak=hitung_jarak(lat_pesan,long_pesan)
+		time.sleep(int(jarak))
 		print('\nreceived %s bytes from %s' % (len(data), address))
 		if str(pesan[3]) == iam:
 			print("ada pesan!")
-			lat_pesan=float(pesan[6])
-			long_pesan=float(pesan[5])
-			jarak=hitung_jarak(lat_pesan,long_pesan)
 			print("pengirim : "+str(pesan[2]))
 			print("jarak pengirim : "+str(jarak)+" km")
 			print(str(pesan[0]))
@@ -62,9 +63,7 @@ def multicast_recv(a,iam):
 def multicast_send_only(pesan):
 	message = pesan
 	multicast_group = (groupip, groupport)
-
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
 	ttl = struct.pack('b', 1)
 	sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
 	sent = sock.sendto(message.encode(), multicast_group)
