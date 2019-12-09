@@ -11,7 +11,7 @@ from geopy.geocoders import Nominatim
 max_hop = 5
 hashbuffer = []
 msgbuffer = []
-groupip='224.3.29.73'
+groupip='224.2.15.70'
 groupport=10000
 latitude=0
 longitude=0
@@ -51,6 +51,7 @@ def multicast_recv(a,iam):
 			#kalo pesannya belum ada di buffer
 			if str(pesan[4]) not in hashbuffer:
 				kirim = data.decode()
+				simpan = str(pesan[0]) + ";0;" + str(pesan[2]) + ";" + str(pesan[3]) + ";" + str(pesan[4]) + ";" + str(pesan[5]) + ";" + str(pesan[6])
 				hashbuffer.append(str(pesan[4]))
 				msgbuffer.append(kirim)
 			#drop kalo udah punya messagenya di buffer
@@ -80,9 +81,9 @@ def multicast_buffering():
 			msg=x.split(";")
 			if int(msg[1])<max_hop:
 				hopnya = int(msg[1]) + 1
-				kirim = str(msg[0]) + ";" + str(hopnya) + ";" + str(msg[2]) + ";" + str(msg[3]) + ";" + str(msg[4]) + ";" + str(msg[5]) + ";" + str(msg[6])
-				multicast_send_only(kirim)
-				msgbuffer[int(lala)]=kirim
+				simpan = str(msg[0]) + ";" + str(hopnya) + ";" + str(msg[2]) + ";" + str(msg[3]) + ";" + str(msg[4]) + ";" + str(msg[5]) + ";" + str(msg[6])
+				multicast_send_only(simpan)
+				msgbuffer[int(lala)]=simpan
 			lala = int(lala)+1
 
 		po = 0
